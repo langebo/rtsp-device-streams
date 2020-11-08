@@ -10,9 +10,16 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/DeviceProxyService.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/DeviceProxyClient.CLI/bin/Debug/netcoreapp3.1/DeviceProxyClient.CLI.dll",
+      "args": [
+        "-c",
+        "HostName=rtsp-device-stream-iothub.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=XlwV/ugLckVn4ReliWBAi6A8aSLOhOxEM7ZsBk1i8JM=",
+        "-d",
+        "ubuntu-dev-vm",
+        "-p",
+        "0"
+      ],
+      "cwd": "${workspaceFolder}/DeviceProxyClient.CLI",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "internalConsole",
       "stopAtEntry": false

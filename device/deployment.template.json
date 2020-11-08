@@ -9,7 +9,13 @@
           "settings": {
             "minDockerVersion": "v1.25",
             "loggingOptions": "",
-            "registryCredentials": {}
+            "registryCredentials": {
+              "rtspdevicestreams": {
+                "username": "$CONTAINER_REGISTRY_USERNAME_rtspdevicestreams",
+                "password": "$CONTAINER_REGISTRY_PASSWORD_rtspdevicestreams",
+                "address": "rtspdevicestreams.azurecr.io"
+              }
+            }
           }
         },
         "systemModules": {
@@ -29,22 +35,58 @@
               "createOptions": {
                 "HostConfig": {
                   "PortBindings": {
-                    "5671/tcp": [{"HostPort": "5671"}],
-                    "8883/tcp": [{"HostPort": "8883"}],
-                    "443/tcp": [{"HostPort": "443"}]
+                    "5671/tcp": [
+                      {
+                        "HostPort": "5671"
+                      }
+                    ],
+                    "8883/tcp": [
+                      {
+                        "HostPort": "8883"
+                      }
+                    ],
+                    "443/tcp": [
+                      {
+                        "HostPort": "443"
+                      }
+                    ]
                   }
                 }
               }
             }
           }
         },
-        "modules": {}
+        "modules": {
+          "DeviceProxy": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.DeviceProxy}",
+              "createOptions": {}
+            },
+            "env": {
+              "REMOTEHOST": {
+                "value": "192.168.178.100"
+              },
+              "REMOTEPORT": {
+                "value": 8554
+              },
+              "CONNECTIONSTRING": {
+                "value": "$DEVICE_CONNSTR"
+              }
+            }
+          }
+        }
       }
     },
     "$edgeHub": {
       "properties.desired": {
         "schemaVersion": "1.0",
-        "routes": {},
+        "routes": {
+          "DeviceProxyToIoTHub": "FROM /messages/modules/DeviceProxy/outputs/* INTO $upstream"
+        },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
         }

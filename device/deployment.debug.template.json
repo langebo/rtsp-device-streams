@@ -74,7 +74,7 @@
                 "value": 554
               },
               "CONNECTIONSTRING": {
-                "value": "<DEVICE_CONNECTION_STRING>"
+                "value": "$DEVICE_CONNSTR"
               }
             }
           },

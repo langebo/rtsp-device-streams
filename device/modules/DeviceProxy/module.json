@@ -4,7 +4,7 @@
     "image": {
         "repository": "rtspdevicestreams.azurecr.io/deviceproxy",
         "tag": {
-            "version": "0.0.24",
+            "version": "1.0.1",
             "platforms": {
                 "amd64": "./Dockerfile.amd64",
                 "amd64.debug": "./Dockerfile.amd64.debug",

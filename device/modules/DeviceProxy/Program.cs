@@ -1,11 +1,8 @@
-using System;
 using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
-using DeviceProxy.Settings;
-using DeviceProxy.Streaming;
+using DeviceProxy.Misc;
 using Microsoft.Azure.Devices.Client;
-using Microsoft.Extensions.Configuration;
 
 namespace DeviceProxy
 {
@@ -14,31 +11,37 @@ namespace DeviceProxy
 
         public static async Task Main(string[] args)
         {
+            // Configure application lifetime handling 
             var cts = new CancellationTokenSource();
             AssemblyLoadContext.Default.Unloading += (ctx) => cts.Cancel();
 
             await Init(cts.Token);
         }
 
+        /// <summary>
+        /// Initializes the device proxy module
+        /// </summary>
+        /// <param name="cancellationToken">Token used for cancelling this operation</param>
+        /// <returns>An awaitable async task</returns>
         private static async Task Init(CancellationToken cancellationToken)
         {
-            var settings = GetAppSettings();
+            // Retrieve the configuration
+            var config = Configuration.GetConfiguration();
+
+            // Retrieving proxy settings
+            var settings = Configuration.GetProxySettings(config);
+
+            // Create typed logger instance
+            var logger = ModuleLoggingFactory.CreateLogger<Proxy>(config);
+
+            // Initiating the DeviceClient instace used to connect to the Azure IoT Hub
             using var deviceClient = DeviceClient.CreateFromConnectionString(settings.ConnectionString, TransportType.Amqp);
-            var streamingClient = new StreamingClient(deviceClient, settings);
 
-            await streamingClient.RunProxyAsync(cancellationToken);
-        }
+            // Creating the Proxy instance
+            var proxy = new Proxy(deviceClient, settings, logger);
 
-        private static AppSettings GetAppSettings()
-        {
-            var settings = new AppSettings();
-
-            new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables()
-                .Build().Bind(settings);
-
-            return settings;
+            // Starting the proxy instance
+            await proxy.RunProxyAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }
