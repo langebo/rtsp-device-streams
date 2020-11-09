@@ -47,7 +47,7 @@ The library can be used in every project that can reference .NET Standard 2.0 li
 
 ### DeviceProxyClient.CLI
 
-In order to build the CLI as a platform specific self-contained, single-file executable, execute the following build instruction:
+This project is based on .NET Core 3.1 (`netcoreapp3.1` being the target framework), so you will need to have the .NET Core 3.1 SDK installed when running the build. In order to publish the CLI as a platform specific self-contained, single-file executable, execute the following instruction within the CLI project folder:
 
 ```bash
 dotnet publish -c Release -r "<RID>" /p:PublishSingleFile=true /p:PublishTrimmed=true
